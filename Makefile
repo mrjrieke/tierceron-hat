@@ -47,6 +47,8 @@ tiara: */*.go
 	$(GO_VARS) $(GO) build -tags "" -o="$(ROOT)/bin/tiara" -ldflags="$(LD_FLAGS)" $(ROOT)/tiara/main.go
 	chmod 700 $(ROOT)/bin/tiara
 
+all: brim brimfeather capfull captip captiptwo captap crown tiara
+
 cleangrpc:
 	rm cap/cap_grpc.pb.go; rm cap/cap.pb.go
 
