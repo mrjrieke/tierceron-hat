@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/trimble-oss/tierceron-hat/cap/tap"
+	"github.com/mrjrieke/tierceron-hat/cap/tap"
 
 	"github.com/lafriks/go-shamir"
 	cmap "github.com/orcaman/concurrent-map/v2"

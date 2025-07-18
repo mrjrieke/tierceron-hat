@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/trimble-oss/tierceron-hat/cap"
-	"github.com/trimble-oss/tierceron-hat/cap/tap"
+	"github.com/mrjrieke/tierceron-hat/cap"
+	"github.com/mrjrieke/tierceron-hat/cap/tap"
 )
 
 const penseDir = "/tmp/trccarrier/"

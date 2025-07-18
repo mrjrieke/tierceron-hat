@@ -3,7 +3,7 @@ package main
 import (
 	"syscall/js"
 
-	"github.com/trimble-oss/tierceron-hat/captip/captiplibjs"
+	"github.com/mrjrieke/tierceron-hat/captip/captiplibjs"
 )
 
 func main() {

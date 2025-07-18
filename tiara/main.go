@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/trimble-oss/tierceron-hat/cap"
+	"github.com/mrjrieke/tierceron-hat/cap"
 )
 
 // The next crowning

@@ -7,8 +7,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/trimble-oss/tierceron-hat/cap"
-	captiplib "github.com/trimble-oss/tierceron-hat/captip/captiplib"
+	"github.com/mrjrieke/tierceron-hat/cap"
+	captiplib "github.com/mrjrieke/tierceron-hat/captip/captiplib"
 )
 
 func emote(featherCtx *cap.FeatherContext, ctlFlapMode string, msg string) {
@@ -42,4 +42,5 @@ func main() {
 	fmt.Printf("\nTime for work....\n")
 	fmt.Printf("\n2nd run\n")
 	captiplib.FeatherCtl(featherCtx, emote)
+	fmt.Printf("\n")
 }

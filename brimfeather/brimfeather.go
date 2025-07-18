@@ -8,8 +8,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/trimble-oss/tierceron-hat/cap"
-	captiplib "github.com/trimble-oss/tierceron-hat/captip/captiplib"
+	"github.com/mrjrieke/tierceron-hat/cap"
+	captiplib "github.com/mrjrieke/tierceron-hat/captip/captiplib"
 )
 
 var modeCtlTrail []string = []string{"I", "wa", "a", "nde", "er", "thro", "ough", "the", "e", "lo", "o", "vly", "y", "wo", "ods", "I", "i", "wa", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "an", "der", "through", "the", "woods."}

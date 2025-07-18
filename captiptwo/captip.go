@@ -7,8 +7,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/trimble-oss/tierceron-hat/cap"
-	captiplib "github.com/trimble-oss/tierceron-hat/captip/captiplib"
+	"github.com/mrjrieke/tierceron-hat/cap"
+	captiplib "github.com/mrjrieke/tierceron-hat/captip/captiplib"
 )
 
 func emote(featherCtx *cap.FeatherContext, ctlFlapMode string, msg string) {

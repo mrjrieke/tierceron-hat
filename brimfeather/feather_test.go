@@ -5,8 +5,8 @@ import (
 	"sync"
 	"testing"
 
-	cap2 "github.com/trimble-oss/tierceron-hat/cap"
-	captiplib "github.com/trimble-oss/tierceron-hat/captip/captiplib"
+	cap2 "github.com/mrjrieke/tierceron-hat/cap"
+	captiplib "github.com/mrjrieke/tierceron-hat/captip/captiplib"
 )
 
 func featherInterrupted(featherCtx *cap2.FeatherContext) error {
