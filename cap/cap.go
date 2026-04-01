@@ -98,6 +98,20 @@ var (
 	penseFeatherCtlCodeMap = cmap.New[string]()
 )
 
+// featherDoneChan signals shutdown to Feather listeners
+var (
+	featherDoneChan   = make(chan struct{})
+	featherDoneClosed = false
+)
+
+// FeatherStop closes the done channel to signal Feather goroutines to exit
+func FeatherStop() {
+	if !featherDoneClosed {
+		close(featherDoneChan)
+		featherDoneClosed = true
+	}
+}
+
 // CodeSaltGuardFn is expected to return a hex.EncodeToString encoded salt
 type CodeSaltGuardFunc func() string
 
@@ -143,9 +157,29 @@ func hasMode(msg []byte, mode byte) bool {
 func handlePluck(conn *kcp.UDPSession, acceptRemote func(int, string) bool) {
 	buf := make([]byte, 50)
 	for {
+		select {
+		case <-featherDoneChan:
+			conn.Close()
+			return
+		default:
+		}
 		if acceptRemote(FEATHER_COMMON, conn.RemoteAddr().String()) {
 			lastReadN := 0
+			lastActivityTime := time.Now()
 			for {
+				select {
+				case <-featherDoneChan:
+					conn.Close()
+					return
+				default:
+				}
+
+				// Force timeout recovery if no activity for 30 seconds
+				if time.Since(lastActivityTime) > 30*time.Second {
+					conn.Close()
+					return
+				}
+
 				time.Sleep(time.Second * 3)
 				conn.SetDeadline(time.Now().Add(15 * time.Second))
 				n, err := conn.Read(buf)
@@ -157,6 +191,9 @@ func handlePluck(conn *kcp.UDPSession, acceptRemote func(int, string) bool) {
 					conn.Close()
 					return
 				}
+
+				// Update activity tracker on successful read
+				lastActivityTime = time.Now()
 				message := buf[:n]
 
 				if hasMode(message, MODE_PLUCK) {
@@ -201,7 +238,21 @@ func bytesSplit(data []byte, separator byte) [][]byte {
 
 func handleMessage(handshakeCode string, conn *kcp.UDPSession, acceptRemote func(int, string) bool) {
 	buf := make([]byte, 4096)
+	lastActivityTime := time.Now()
 	for {
+		select {
+		case <-featherDoneChan:
+			conn.Close()
+			return
+		default:
+		}
+
+		// Force timeout recovery if no activity for 30 seconds
+		if time.Since(lastActivityTime) > 30*time.Second {
+			conn.Close()
+			return
+		}
+
 		conn.SetReadDeadline(time.Now().Add(500 * time.Millisecond))
 		n, err := conn.Read(buf)
 		if _, ok := clientCodeMap.Get(conn.RemoteAddr().String()); !ok {
@@ -246,6 +297,8 @@ func handleMessage(handshakeCode string, conn *kcp.UDPSession, acceptRemote func
 			defer conn.Close()
 			return
 		} else {
+			// Update activity on successful read
+			lastActivityTime = time.Now()
 			if _, ok := clientCodeMap.Get(conn.RemoteAddr().String()); !ok {
 				clientCodeMap.Set(conn.RemoteAddr().String(), [][]byte{})
 			}
@@ -310,10 +363,18 @@ func Feather(encryptPass string, encryptSalt string, hostAddr string, handshakeC
 	go func() {
 		if pluckListener, err := kcp.ListenWithOptions(hostAddr+"1", nil, 0, 0); err == nil {
 			for {
+				select {
+				case <-featherDoneChan:
+					pluckListener.Close()
+					return
+				default:
+				}
 				pluckS, err := pluckListener.AcceptKCP()
 				if err != nil {
 					if errors.Is(err, os.ErrDeadlineExceeded) || err.Error() == "timeout" || err == io.EOF {
-						pluckS.Close()
+						if pluckS != nil {
+							pluckS.Close()
+						}
 					}
 					time.Sleep(time.Second)
 					continue
@@ -327,6 +388,12 @@ func Feather(encryptPass string, encryptSalt string, hostAddr string, handshakeC
 	block, _ := kcp.NewAESBlockCrypt(key)
 	if listener, err := kcp.ListenWithOptions(hostAddr, block, 10, 3); err == nil {
 		for {
+			select {
+			case <-featherDoneChan:
+				listener.Close()
+				return
+			default:
+			}
 			s, err := listener.AcceptKCP()
 			if err != nil {
 				continue

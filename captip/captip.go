@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -12,6 +13,10 @@ import (
 )
 
 func emote(featherCtx *cap.FeatherContext, ctlFlapMode string, msg string) {
+	msgLower := strings.ToLower(msg)
+	if strings.Contains(msgLower, "waiting") || strings.Contains(msgLower, "perch and gaze") || strings.Contains(msgLower, "aborting connection") || strings.Contains(msgLower, "fly away") {
+		return
+	}
 	fmt.Print(msg)
 }
 
