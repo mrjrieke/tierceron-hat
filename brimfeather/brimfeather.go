@@ -171,6 +171,6 @@ func main() {
 
 	go brimFeatherer(featherCtxTwo)
 
-	serverChan := make(chan struct{})
-	<-serverChan
+	<-interruptChan
+	cap.FeatherStop()
 }
