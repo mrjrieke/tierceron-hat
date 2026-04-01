@@ -82,6 +82,12 @@ func brimFeatherer(featherCtx *cap.FeatherContext) {
 	go captiplib.FeatherCtlEmitter(featherCtx, modeCtlTrailChan, emote, queryAction)
 
 rerun:
+	// Reset buffers for new run
+	outputMutex.Lock()
+	messageOneBuffer = ""
+	messageTwoBuffer = ""
+	outputMutex.Unlock()
+
 	atomic.StoreInt64(&featherCtx.RunState, cap.RUN_STARTED)
 	for _, modeCtl := range modeCtlTrail {
 		modeCtlTrailChan <- modeCtl

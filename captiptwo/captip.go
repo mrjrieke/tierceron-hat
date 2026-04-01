@@ -46,6 +46,8 @@ func main() {
 		captiplib.FeatherCtl(featherCtx, emote)
 		fmt.Printf("\nResting....\n")
 		time.Sleep(20 * time.Second)
+		// Reset server state before 2nd run
+		cap.FeatherCtlEmit(featherCtx, string(cap.MODE_PERCH), *featherCtx.SessionIdentifier, true)
 		fmt.Printf("\nTime for work....\n")
 		fmt.Printf("\n2nd run\n")
 		captiplib.FeatherCtl(featherCtx, emote)

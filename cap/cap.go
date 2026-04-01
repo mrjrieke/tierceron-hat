@@ -380,6 +380,7 @@ func Feather(encryptPass string, encryptSalt string, hostAddr string, handshakeC
 					continue
 				}
 
+				pluckS.SetNoDelay(1, 40, 1, 1)
 				go handlePluck(pluckS, acceptRemote)
 			}
 		}
@@ -398,6 +399,7 @@ func Feather(encryptPass string, encryptSalt string, hostAddr string, handshakeC
 			if err != nil {
 				continue
 			}
+			s.SetNoDelay(1, 40, 1, 1)
 			if acceptRemote(FEATHER_COMMON, s.RemoteAddr().String()) {
 				go handleMessage(handshakeCode, s, acceptRemote)
 			} else {
@@ -419,7 +421,13 @@ func PluckCtlEmit(featherCtx *FeatherContext, pense []byte) (bool, error) {
 	retries := 0
 
 retryEstablish:
-	penseConn, penseErr = kcp.Dial(hostAddr)
+	penseConnRaw, penseErr := kcp.Dial(hostAddr)
+	penseConn = penseConnRaw
+	if penseErr == nil {
+		if s, ok := penseConnRaw.(*kcp.UDPSession); ok {
+			s.SetNoDelay(1, 40, 1, 1)
+		}
+	}
 	if penseErr != nil {
 		time.Sleep(time.Second)
 		if retries < 10 && penseErr != io.EOF {
@@ -513,6 +521,7 @@ func FeatherCtlEmitBinary(featherCtx *FeatherContext, modeCtlPack string, pense 
 	if penseErr != nil {
 		return nil, penseErr
 	}
+	penseConn.SetNoDelay(1, 40, 1, 1)
 	defer penseConn.Close()
 	// Preallocate enough space for all the pieces
 	protocolSize := len(PROTOCOL_HDR) + 1 + len(*featherCtx.HandshakeCode) + 1 + len(modeCtlPack) + 1 + len(pense)
@@ -563,6 +572,7 @@ func FeatherWriter(featherCtx *FeatherContext, pense string) ([]byte, error) {
 	if penseErr != nil {
 		return nil, penseErr
 	}
+	penseConn.SetNoDelay(1, 40, 1, 1)
 	defer penseConn.Close()
 	for _, penseBlock := range penseSplits {
 		_, penseWriteErr := penseConn.Write(penseBlock)
