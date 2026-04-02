@@ -95,6 +95,9 @@ rerun:
 			goto rerun
 		}
 	}
+	// Wait briefly to ensure last item is transmitted before completing
+	// TODO: need ack... but that defeats purpose of kcp...
+	time.Sleep(3 * time.Second)
 	modeCtlTrailChan <- cap.CTL_COMPLETE
 	for {
 		if atomic.LoadInt64(&featherCtx.RunState) == cap.RUNNING {

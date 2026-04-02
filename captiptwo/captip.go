@@ -45,12 +45,32 @@ func main() {
 		fmt.Printf("\nFirst run\n")
 		captiplib.FeatherCtl(featherCtx, emote)
 		fmt.Printf("\nResting....\n")
-		time.Sleep(20 * time.Second)
+		time.Sleep(2 * time.Second)
+
 		// Reset server state before 2nd run
 		cap.FeatherCtlEmit(featherCtx, string(cap.MODE_PERCH), *featherCtx.SessionIdentifier, true)
 		fmt.Printf("\nTime for work....\n")
 		fmt.Printf("\n2nd run\n")
 		captiplib.FeatherCtl(featherCtx, emote)
+		fmt.Printf("\nResting....\n")
+		time.Sleep(1 * time.Second)
+
+		// Reset server state before 3rd run
+		cap.FeatherCtlEmit(featherCtx, string(cap.MODE_PERCH), *featherCtx.SessionIdentifier, true)
+		fmt.Printf("\nTime for work....\n")
+		fmt.Printf("\n3rd run\n")
+		captiplib.FeatherCtl(featherCtx, emote)
+		fmt.Printf("\nResting....\n")
+		time.Sleep(2 * time.Second)
+
+		// Reset server state before 4th run
+		cap.FeatherCtlEmit(featherCtx, string(cap.MODE_PERCH), *featherCtx.SessionIdentifier, true)
+		fmt.Printf("\nTime for work....\n")
+		fmt.Printf("\n4th run\n")
+		captiplib.FeatherCtl(featherCtx, emote)
+		fmt.Printf("\nResting....\n")
+		time.Sleep(2 * time.Second)
+
 		close(done)
 	}()
 
