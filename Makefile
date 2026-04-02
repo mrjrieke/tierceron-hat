@@ -8,7 +8,7 @@ ROOT := .
 LD_FLAGS := -X $(ROOT).Version=$(VERSION) -X $(ROOT).Commit=$(COMMIT) -X $(ROOT).BuildTime=$(BUILD_TIME)
 GOBIN ?= ./bin
 
-.PHONY: help clean 
+.PHONY: help clean depend brim brimfeather capfull captip captiptwo captap crown tiara cleangrpc capgrpc all
 
 depend:
 	go mod tidy
