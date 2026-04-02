@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -12,6 +13,10 @@ import (
 )
 
 func emote(featherCtx *cap.FeatherContext, ctlFlapMode string, msg string) {
+	msgLower := strings.ToLower(msg)
+	if strings.Contains(msgLower, "waiting") || strings.Contains(msgLower, "perch and gaze") || strings.Contains(msgLower, "aborting connection") || strings.Contains(msgLower, "fly away") {
+		return
+	}
 	fmt.Print(msg)
 }
 
@@ -23,7 +28,7 @@ func interrupted(featherCtx *cap.FeatherContext) error {
 
 func main() {
 	var interruptChan chan os.Signal = make(chan os.Signal, 5)
-	signal.Notify(interruptChan, os.Interrupt, syscall.SIGTERM)
+	signal.Notify(interruptChan, os.Interrupt, syscall.SIGTERM, syscall.SIGABRT, syscall.SIGALRM)
 
 	localHostAddr := ""
 	encryptPass := "Som18vhjqa72935h"
@@ -35,11 +40,19 @@ func main() {
 
 	featherCtx := captiplib.FeatherCtlInit(interruptChan, &localHostAddr, &encryptPass, &encryptSalt, &hostAddr, &handshakeCode, &sessionIdentifier, &env, captiplib.AcceptRemote, interrupted)
 
-	fmt.Printf("\nFirst run\n")
-	captiplib.FeatherCtl(featherCtx, emote)
-	fmt.Printf("\nResting....\n")
-	time.Sleep(20 * time.Second)
-	fmt.Printf("\nTime for work....\n")
-	fmt.Printf("\n2nd run\n")
-	captiplib.FeatherCtl(featherCtx, emote)
+	done := make(chan struct{})
+	go func() {
+		fmt.Printf("\nFirst run\n")
+		captiplib.FeatherCtl(featherCtx, emote)
+		fmt.Printf("\nResting....\n")
+		time.Sleep(20 * time.Second)
+		fmt.Printf("\nTime for work....\n")
+		fmt.Printf("\n2nd run\n")
+		captiplib.FeatherCtl(featherCtx, emote)
+		close(done)
+	}()
+
+	<-interruptChan
+	interrupted(featherCtx)
+	<-done
 }

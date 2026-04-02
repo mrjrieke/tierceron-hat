@@ -287,14 +287,31 @@ func FeatherCtlEmitter(featherCtx *cap.FeatherContext, modeCtlTrailChan chan str
 				}
 				if queryAction != nil {
 					retries := 0
+					const maxRetries = 3
 				retryQueryAction:
 					_, err := queryAction(featherCtx, modeCtl)
-					if errors.Is(err, context.DeadlineExceeded) {
-						if retries < 3 {
-							goto retryQueryAction
+					if err != nil {
+						// Check if it's a timeout-related error
+						isTimeout := errors.Is(err, context.DeadlineExceeded)
+						if !isTimeout {
+							// Also check for net.Error timeout interfaces
+							var netErr interface{ Timeout() bool }
+							if errors.As(err, &netErr) && netErr.Timeout() {
+								isTimeout = true
+							}
 						}
-						// Timeout occurred - go back to perching
-						goto perching
+
+						if isTimeout && retries < maxRetries {
+							retries++
+							// Backoff: 50ms + random up to 150ms
+							backoff := time.Duration(50+rand.Intn(150)) * time.Millisecond
+							time.Sleep(backoff)
+							goto retryQueryAction
+						} else if isTimeout {
+							// Max retries exhausted - go back to perching
+							goto perching
+						}
+						// Non-timeout error, continue processing
 					}
 				}
 				flapMode := []byte{cap.MODE_FLAP, '_'}
