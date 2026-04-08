@@ -21,7 +21,7 @@ require (
 	github.com/xtaci/kcp-go/v5 v5.6.70 // indirect
 	golang.org/x/crypto v0.48.0 // indirect
 	golang.org/x/net v0.49.0 // indirect
-	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
 	golang.org/x/text v0.34.0 // indirect
 	golang.org/x/time v0.14.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217 // indirect
@@ -31,10 +31,10 @@ require (
 
 replace (
 	github.com/trimble-oss/tierceron-hat => ../
-	go.opentelemetry.io/otel => go.opentelemetry.io/otel v1.40.0
-	go.opentelemetry.io/otel/metric => go.opentelemetry.io/otel/metric v1.40.0
-	go.opentelemetry.io/otel/sdk => go.opentelemetry.io/otel/sdk v1.40.0
-	go.opentelemetry.io/otel/sdk/metric => go.opentelemetry.io/otel/sdk/metric v1.40.0
-	go.opentelemetry.io/otel/trace => go.opentelemetry.io/otel/trace v1.40.0
+	go.opentelemetry.io/otel => go.opentelemetry.io/otel v1.43.0
+	go.opentelemetry.io/otel/metric => go.opentelemetry.io/otel/metric v1.43.0
+	go.opentelemetry.io/otel/sdk => go.opentelemetry.io/otel/sdk v1.43.0
+	go.opentelemetry.io/otel/sdk/metric => go.opentelemetry.io/otel/sdk/metric v1.43.0
+	go.opentelemetry.io/otel/trace => go.opentelemetry.io/otel/trace v1.43.0
 	google.golang.org/genproto => google.golang.org/genproto v0.0.0-20251202230838-ff82c1b0f217
 )
