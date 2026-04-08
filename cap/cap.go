@@ -380,7 +380,8 @@ func Feather(encryptPass string, encryptSalt string, hostAddr string, handshakeC
 					continue
 				}
 
-				pluckS.SetNoDelay(1, 40, 1, 1)
+				// Balanced for distributed systems: nodelay=1 (fast), interval=60ms (not too aggressive), resend=2, congestion=0 (enabled)
+				pluckS.SetNoDelay(1, 60, 2, 0)
 				go handlePluck(pluckS, acceptRemote)
 			}
 		}
@@ -399,7 +400,8 @@ func Feather(encryptPass string, encryptSalt string, hostAddr string, handshakeC
 			if err != nil {
 				continue
 			}
-			s.SetNoDelay(1, 40, 1, 1)
+			// Balanced for distributed systems: nodelay=1 (fast), interval=60ms (not too aggressive), resend=2, congestion=0 (enabled)
+			s.SetNoDelay(1, 60, 2, 0)
 			if acceptRemote(FEATHER_COMMON, s.RemoteAddr().String()) {
 				go handleMessage(handshakeCode, s, acceptRemote)
 			} else {
@@ -425,7 +427,8 @@ retryEstablish:
 	penseConn = penseConnRaw
 	if penseErr == nil {
 		if s, ok := penseConnRaw.(*kcp.UDPSession); ok {
-			s.SetNoDelay(1, 40, 1, 1)
+			// Balanced for distributed systems: nodelay=1 (fast), interval=60ms (not too aggressive), resend=2, congestion=0 (enabled)
+			s.SetNoDelay(1, 60, 2, 0)
 		}
 	}
 	if penseErr != nil {
@@ -521,7 +524,8 @@ func FeatherCtlEmitBinary(featherCtx *FeatherContext, modeCtlPack string, pense 
 	if penseErr != nil {
 		return nil, penseErr
 	}
-	penseConn.SetNoDelay(1, 40, 1, 1)
+	// Balanced for distributed systems: nodelay=1 (fast), interval=60ms (not too aggressive), resend=2, congestion=0 (enabled)
+	penseConn.SetNoDelay(1, 60, 2, 0)
 	defer penseConn.Close()
 	// Preallocate enough space for all the pieces
 	protocolSize := len(PROTOCOL_HDR) + 1 + len(*featherCtx.HandshakeCode) + 1 + len(modeCtlPack) + 1 + len(pense)
@@ -572,7 +576,8 @@ func FeatherWriter(featherCtx *FeatherContext, pense string) ([]byte, error) {
 	if penseErr != nil {
 		return nil, penseErr
 	}
-	penseConn.SetNoDelay(1, 40, 1, 1)
+	// Balanced for distributed systems: nodelay=1 (fast), interval=60ms (not too aggressive), resend=2, congestion=0 (enabled)
+	penseConn.SetNoDelay(1, 60, 2, 0)
 	defer penseConn.Close()
 	for _, penseBlock := range penseSplits {
 		_, penseWriteErr := penseConn.Write(penseBlock)
