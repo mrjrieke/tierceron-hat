@@ -1,6 +1,6 @@
 module github.com/trimble-oss/tierceron-hat
 
-go 1.26.1
+go 1.26.2
 
 require (
 	github.com/lafriks/go-shamir v1.2.0
