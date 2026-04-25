@@ -1,6 +1,6 @@
 module github.com/trimble-oss/tierceron-hat/brimfeather
 
-go 1.26.1
+go 1.26.2
 
 require (
 	github.com/trimble-oss/tierceron-hat v0.0.0-00010101000000-000000000000
